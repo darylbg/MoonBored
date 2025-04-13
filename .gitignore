@@ -1,2 +1,4 @@
 Client/.gitignore
 Server/.gitignore
+/package-lock.json
+node_modules

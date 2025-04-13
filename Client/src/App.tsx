@@ -1,35 +1,88 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import axios from "axios";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
+
+  const routes = [
+    {
+      espIp: "192.168.0.175",
+      routeName: "Green V3",
+      climb: {
+        holds: [
+          { index: 1, type: "start", color: "green" },
+          { index: 2, type: "start", color: "green" },
+          { index: 8, type: "mid", color: "blue" },
+          { index: 14, type: "mid", color: "blue" },
+          { index: 25, type: "mid", color: "blue" },
+          { index: 27, type: "mid", color: "blue" },
+          { index: 33, type: "mid", color: "blue" },
+          { index: 45, type: "mid", color: "blue" },
+          { index: 46, type: "mid", color: "blue" },
+          { index: 48, type: "end", color: "red" }
+        ]
+      }
+    },
+    {
+      espIp: "192.168.0.175",
+      routeName: "Red Dyno",
+      climb: {
+        holds: [
+          { index: 3, type: "start", color: "green" },
+          { index: 5, type: "mid", color: "green" },
+          { index: 16, type: "mid", color: "blue" },
+          { index: 27, type: "mid", color: "blue" },
+          { index: 29, type: "mid", color: "blue" },
+          { index: 40, type: "mid", color: "blue" },
+          { index: 43, type: "end", color: "red" }
+        ]
+      }
+    },
+    {
+      espIp: "192.168.0.175",
+      routeName: "Blue Traverse",
+      climb: {
+        holds: [
+          { index: 0, type: "start", color: "green" },
+          { index: 1, type: "start", color: "green" },
+          { index: 10, type: "mid", color: "blue" },
+          { index: 14, type: "mid", color: "blue" },
+          { index: 18, type: "mid", color: "blue" },
+          { index: 19, type: "mid", color: "blue" },
+          { index: 29, type: "mid", color: "blue" },
+          { index: 31, type: "mid", color: "blue" },
+          { index: 42, type: "end", color: "red" }
+        ]
+      }
+    }
+  ];
+
+  const [lastSent, setLastSent] = useState<string | null>(null);
+
+  const sendRoute = async (routeData: typeof routes[number]) => {
+    try {
+      const response = await axios.post(`${serverUrl}/api/controller`, routeData);
+      console.log("Route sent! Response:", response.data);
+      setLastSent(routeData.routeName);
+    } catch (error) {
+      console.error("Error sending route:", error);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <h2>LED Route Sender</h2>
+      <div style={{ marginBottom: "1rem" }}>
+        {routes.map((route, idx) => (
+          <button key={idx} onClick={() => sendRoute(route)} style={{ marginRight: "0.5rem" }}>
+            {route.routeName}
+          </button>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      {lastSent && <div>✅ Sent: <strong>{lastSent}</strong></div>}
+    </div>
+  );
 }
 
-export default App
+export default App;
