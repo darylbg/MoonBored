@@ -11,5 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.1.2"
-  }
+  },
+  "dependencies": {
+  },
+  "private": "true",
+  "workspaces": ["Client", "Server", "Types"]
 }

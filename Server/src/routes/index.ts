@@ -1,10 +1,11 @@
 import { Router } from "express";
-import testRoute from "./databaseRoutes/testRoute";
-import ledRoutes from "./controllerRoutes/ledRoutes";
+import databaseRoutes from "./databaseRoutes";
+import controllerRoutes from "./controllerRoutes";
+import AuthMiddleware from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.use("/database", testRoute);
-router.use("/controller", ledRoutes);
+router.use("/database", databaseRoutes);
+router.use("/controller", controllerRoutes);
 
 export default router;

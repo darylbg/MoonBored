@@ -1,39 +1,38 @@
 import { Router, Request, Response } from "express";
 import axios from "axios";
 
+interface Move {
+  description: number;
+  isStart: boolean;
+  isEnd: boolean;
+}
+
 interface ClimbRoute {
   espIp: string;
   routeName?: string;
-  climb: {
-    holds: {
-      index: number;
-      type: "start" | "mid" | "end";
-      color: "red" | "green" | "blue";
-    }[];
-  };
+  moves: Move[];
 }
 
 const router = Router();
 
-// forward climb to esp32
-router.post("/", async (req: Request, res: Response) => {
-  const { espIp, climb } = req.body as ClimbRoute;
+// Forward climb to ESP32
+router.post("/climb-builder", async (req: Request, res: Response) => {
+  const { espIp, moves, routeName } = req.body as ClimbRoute;
 
-  if (!espIp || !climb) {
-    res.status(400).send("Missing data");
+  if (!espIp || !moves) {
+    res.status(400).send("Missing data: espIp or moves");
     return;
   }
 
   try {
-    const response = await axios.post(`http://${espIp}/climb`, { holds: climb.holds });
-
+    await axios.post(`http://${espIp}/climb-builder`, { moves });
+    console.log(`Route "${routeName || "Unnamed"}" sent to ESP at ${espIp}`);
+    console.log("Moves:", moves);
+    res.send("Climb sent to ESP32");
   } catch (error) {
-    console.log(error);
-    res.status(200).send(`error posting climb to controller: ${error}`);
+    console.error("Error posting climb to controller:", error);
+    res.status(500).send("Failed to send climb to ESP32");
   }
-
-  console.log(climb.holds, espIp);
-  res.send("Climb received");
 });
 
 export default router;

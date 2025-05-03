@@ -1,88 +1,73 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState, ReactNode } from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import AddClimb from "./pages/AddClimb";
+import Moonboard from "./pages/Moonboard";
+import Activity from "./pages/Activity";
+import MainTopBar from "./components/MainTopBar";
+import MainMenu from "./components/MainMenu";
+import ClimbTopBar from "./components/ClimbTopBar";
+import AddClimbMenu from "./components/AddClimbMenu";
+import Settings from "./pages/Settings";
+import Climb from "./pages/Climb";
+import { GlobalProvider } from "./context/GlobalContext";
 import "./App.css";
 
-function App() {
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
+// Type for layout children
+interface LayoutProps {
+  children: ReactNode;
+}
 
-  const routes = [
-    {
-      espIp: "192.168.0.175",
-      routeName: "Green V3",
-      climb: {
-        holds: [
-          { index: 1, type: "start", color: "green" },
-          { index: 2, type: "start", color: "green" },
-          { index: 8, type: "mid", color: "blue" },
-          { index: 14, type: "mid", color: "blue" },
-          { index: 25, type: "mid", color: "blue" },
-          { index: 27, type: "mid", color: "blue" },
-          { index: 33, type: "mid", color: "blue" },
-          { index: 45, type: "mid", color: "blue" },
-          { index: 46, type: "mid", color: "blue" },
-          { index: 48, type: "end", color: "red" }
-        ]
-      }
-    },
-    {
-      espIp: "192.168.0.175",
-      routeName: "Red Dyno",
-      climb: {
-        holds: [
-          { index: 3, type: "start", color: "green" },
-          { index: 5, type: "mid", color: "green" },
-          { index: 16, type: "mid", color: "blue" },
-          { index: 27, type: "mid", color: "blue" },
-          { index: 29, type: "mid", color: "blue" },
-          { index: 40, type: "mid", color: "blue" },
-          { index: 43, type: "end", color: "red" }
-        ]
-      }
-    },
-    {
-      espIp: "192.168.0.175",
-      routeName: "Blue Traverse",
-      climb: {
-        holds: [
-          { index: 0, type: "start", color: "green" },
-          { index: 1, type: "start", color: "green" },
-          { index: 10, type: "mid", color: "blue" },
-          { index: 14, type: "mid", color: "blue" },
-          { index: 18, type: "mid", color: "blue" },
-          { index: 19, type: "mid", color: "blue" },
-          { index: 29, type: "mid", color: "blue" },
-          { index: 31, type: "mid", color: "blue" },
-          { index: 42, type: "end", color: "red" }
-        ]
-      }
-    }
-  ];
-
-  const [lastSent, setLastSent] = useState<string | null>(null);
-
-  const sendRoute = async (routeData: typeof routes[number]) => {
-    try {
-      const response = await axios.post(`${serverUrl}/api/controller`, routeData);
-      console.log("Route sent! Response:", response.data);
-      setLastSent(routeData.routeName);
-    } catch (error) {
-      console.error("Error sending route:", error);
-    }
-  };
-
+function MainLayout({ children } : LayoutProps) {
   return (
-    <div>
-      <h2>LED Route Sender</h2>
-      <div style={{ marginBottom: "1rem" }}>
-        {routes.map((route, idx) => (
-          <button key={idx} onClick={() => sendRoute(route)} style={{ marginRight: "0.5rem" }}>
-            {route.routeName}
-          </button>
-        ))}
-      </div>
-      {lastSent && <div>✅ Sent: <strong>{lastSent}</strong></div>}
-    </div>
+    <>
+      <MainTopBar />
+        <div className="flex flex-col flex-1 overflow-y-auto ">
+          {children}
+        </div>
+      <MainMenu />
+    </>
   );
 }
 
-export default App;
+function ClimbLayout({ children } : LayoutProps) {
+  return (
+    <>
+      <ClimbTopBar />
+      <div className="flex flex-col flex-1 overflow-y-auto">
+        {children}
+      </div>
+    </>
+  );
+}
+
+function AddClimbLayout({ children } : LayoutProps) {
+  return (
+    <>
+      <div className="flex flex-col flex-1 overflow-y-auto">
+        {children}
+      </div>
+      <AddClimbMenu />
+    </>
+  );
+}
+
+export default function App() {
+ 
+  return (
+    <GlobalProvider>
+    <HashRouter>
+    
+      <Routes>
+        <Route path="/" element={<MainLayout><Home /></MainLayout>}/>// prettier-ignore
+        <Route path="/settings" element={<MainLayout><Settings /></MainLayout> } /> // prettier-ignore
+        <Route path="/activity" element={<MainLayout><Activity /></MainLayout>} />// prettier-ignore
+        <Route path="/moonboard" element={<MainLayout><Moonboard /></MainLayout>} />// prettier-ignore
+        <Route path="/climb" element={<ClimbLayout><Climb /></ClimbLayout>} />// prettier-ignore
+        <Route path="/addclimb" element={<AddClimbLayout><AddClimb /></AddClimbLayout>} />// prettier-ignore
+      </Routes>
+    
+  </HashRouter>
+  </GlobalProvider>
+  );
+}
