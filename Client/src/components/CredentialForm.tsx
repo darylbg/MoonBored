@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 export default function CredentialForm({
   onSubmit,
   submitMessage,
-  setSubmitMessage,
+//   setSubmitMessage,
   isLoading,
 }: {
   onSubmit: (data: UserCredentials) => void;
   submitMessage?: string;
-  setSubmitMessage: (message: string) => void;
+//   setSubmitMessage: (message: string) => void;
   isLoading: boolean;
 }) {
   const {

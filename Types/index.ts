@@ -14,6 +14,7 @@ export type Climb = {
     networkMacAddress: string;
     createdAt: Date;
     role: string;
+    controllerIp: string;
   }
 
   export type PublicUser = Omit<User, "networkPassword" | "networkMacAddress">;

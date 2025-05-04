@@ -16,41 +16,25 @@ router.post("/admin", async (req: Request, res: Response) => {
        return;
     }
 
-    const hashedPassword = await bcrypt.hash(networkPassword, 10);
-    const user: InsertUser = {
-      networkSsid,
-      networkPassword: hashedPassword,
-      name: "test user",
-      networkMacAddress: "00:00:00:00:00:00",
-      role: role
-    };
+    if (role !== "admin") {
+        res.status(400).json({ message: "Role must be admin" });
+        return;
+    }
 
-    const { data: existingUser, error: existingUserError } = await supabase
+    const { data, error } = await supabase
       .from("User")
-      .select("networkSsid")
+      .select("networkSsid, networkPassword")
       .eq("networkSsid", networkSsid)
       .single();    
 
-    if (existingUser) {
-        res.status(400).json({ message: "User with that network SSID already exists" });
+    const unhashedPassword = await bcrypt.compare(networkPassword, data?.networkPassword);
+
+    if (!unhashedPassword) {
+        res.status(400).json({ message: "Invalid password" });
         return;
-      }
-
-    const { data: newUser, error: newUserError } = await supabase
-      .from("User")
-      .insert(user)
-      .select("id, name, networkSsid, networkMacAddress, createdAt, role")
-      .single();
-
-    if (newUserError) {
-      res.status(500).json({ message: "Error registering user", newUserError });
-      return;
     }
-
-    res.status(201).json({
-      message: "User registered successfully",
-      data: newUser as PublicUser
-    });
+    
+    res.status(200).json({ message: "Admin login successful" });
     return;
   } catch (error) {
     console.error("Error registering user", error);

@@ -22,7 +22,8 @@ router.post("/register", async (req: Request, res: Response) => {
       networkPassword: hashedPassword,
       name: "test user",
       networkMacAddress: "00:00:00:00:00:00",
-      role: role
+      role: role,
+      controllerIp: ""
     };
 
     const { data: existingUser, error: existingUserError } = await supabase
@@ -39,7 +40,7 @@ router.post("/register", async (req: Request, res: Response) => {
     const { data: newUser, error: newUserError } = await supabase
       .from("User")
       .insert(user)
-      .select("id, name, networkSsid, createdAt, role")
+      .select("id, name, networkSsid, createdAt, role, controllerIp")
       .single();
 
     if (newUserError) {

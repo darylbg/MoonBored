@@ -5,17 +5,12 @@ import { UserCredentials } from "@moonbored/types";
 import { ErrorMiddleware } from "../Utils/ErrorMiddleware";
 import { useState } from "react";
 
-// settings page
-// - update user details
-//  - update username/networkssid/networkpassword
-// - admin
-//  - register new user
 
 export default function Settings() {
-  const { themeToggle, darkMode } = useGlobalContext();
-  const [CF_SubmitMessage, setCF_SubmitMessage] = useState<
-    string | undefined
-  >(undefined);
+  const { themeToggle, win95Mode } = useGlobalContext();
+  const [CF_SubmitMessage, setCF_SubmitMessage] = useState<string | undefined>(
+    undefined
+  );
   const [CF_isLoading, setCF_isLoading] = useState<boolean>(false);
 
   const RegisterUser = async (data: UserCredentials) => {
@@ -46,15 +41,15 @@ export default function Settings() {
 
       <button
         onClick={themeToggle}
-        className="p-2 rounded-md bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        className="p-2 rounded-md bg-gray-200 win95:bg-gray-800 text-gray-900 win95:text-gray-100"
       >
-        {darkMode ? "light" : "dark"} mode
+        {win95Mode ? "default" : "win95"} mode
       </button>
 
       <CredentialForm
         onSubmit={RegisterUser}
         submitMessage={CF_SubmitMessage}
-        setSubmitMessage={setCF_SubmitMessage}
+        // setSubmitMessage={setCF_SubmitMessage}
         isLoading={CF_isLoading}
       />
     </div>

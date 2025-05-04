@@ -6,11 +6,11 @@ import {
   ReactNode,
 } from "react";
 import axios from "axios";
-import {User, Climb} from "@moonbored/types"
+import { Climb} from "@moonbored/types"
 
 
 type GlobalContextType = {
-  darkMode: boolean;
+  win95Mode: boolean;
   themeToggle: () => void;
   getAllClimbs: () => void;
   allClimbs: Climb[];
@@ -25,23 +25,23 @@ type GlobalProviderProps = {
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const serverUrl = import.meta.env.VITE_SERVER_URL!;
 
-  const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") === "dark"
+  const [win95Mode, setWin95Mode] = useState(
+    () => localStorage.getItem("theme") === "win95"
   );
   const [allClimbs, setAllClimbs] = useState<Climb[]>([]);
 
   useEffect(() => {
     const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
+    if (win95Mode) {
+      root.classList.add("win95");
+      localStorage.setItem("theme", "win95");
     } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+      root.classList.remove("win95");
+      localStorage.setItem("theme", "default");
     }
-  }, [darkMode]);
+  }, [win95Mode]);
 
-  const themeToggle = () => setDarkMode((prev) => !prev);
+  const themeToggle = () => setWin95Mode((prev) => !prev);
 
   // get all climbs
   const getAllClimbs = async () => {
@@ -55,7 +55,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
 
   return (
     <GlobalContext.Provider
-      value={{ darkMode, themeToggle, getAllClimbs, allClimbs }}
+      value={{ win95Mode, themeToggle, getAllClimbs, allClimbs }}
     >
       {children}
     </GlobalContext.Provider>

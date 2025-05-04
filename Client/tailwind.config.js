@@ -1,30 +1,16 @@
 // tailwind.config.js
-/** @type {import('tailwindcss').Config} */
+import plugin from "tailwindcss/plugin";
+
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      colors: {
-        win95: {
-          teal: '#008080',
-          blue: '#000080',
-          black: '#000000',
-          white: '#FFFFFF',
-          grey: '#C0C0C0',
-          darkGrey: '#7F7F7F',
-          lightGrey: '#DFDFDF',
-        },
-      },
-      fontFamily: {
-        sans: ['"Tahoma"', 'Geneva', 'sans-serif'],
-      },
-      borderRadius: {
-        none: '0',
-      },
+      colors: {},
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant("win95", ".win95 &"); // this enables `win95:bg-win95-grey`
+    }),
+  ],
 };
